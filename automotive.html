@@ -408,67 +408,67 @@
     </footer>
 
     <script>
-        // Mobile menu toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            let isMenuOpen = false;
+       // Mobile menu toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let isMenuOpen = false;
 
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    isMenuOpen = !isMenuOpen;
-                    
-                    if (isMenuOpen) {
-                        mobileMenu.classList.add('active');
-                        // Change hamburger to X icon
-                        mobileMenuButton.innerHTML = `
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        `;
-                    } else {
-                        mobileMenu.classList.remove('active');
-                        // Change X back to hamburger icon
-                        mobileMenuButton.innerHTML = `
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        `;
-                    }
-                });
-
-                // Close mobile menu when clicking on a link
-                const mobileLinks = document.querySelectorAll('#mobile-menu a');
-                mobileLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        isMenuOpen = false;
-                        mobileMenu.classList.remove('active');
-                        mobileMenuButton.innerHTML = `
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        `;
-                    });
-                });
-
-                // Close mobile menu when window is resized to desktop size
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768 && isMenuOpen) {
-                        isMenuOpen = false;
-                        mobileMenu.classList.remove('active');
-                        mobileMenuButton.innerHTML = `
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        `;
-                    }
-                });
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            isMenuOpen = !isMenuOpen;
+            
+            if (isMenuOpen) {
+                mobileMenu.classList.add('active');
+                // Change hamburger to X icon
+                mobileMenuButton.innerHTML = `
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                `;
+            } else {
+                mobileMenu.classList.remove('active');
+                // Change X back to hamburger icon
+                mobileMenuButton.innerHTML = `
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                `;
             }
         });
 
-        // Navigation script (keeping the original functionality)
-       (function() {
+        // Close mobile menu when clicking on a link
+        const mobileLinks = document.querySelectorAll('#mobile-menu a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                isMenuOpen = false;
+                mobileMenu.classList.remove('active');
+                mobileMenuButton.innerHTML = `
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                `;
+            });
+        });
+
+        // Close mobile menu when window is resized to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && isMenuOpen) {
+                isMenuOpen = false;
+                mobileMenu.classList.remove('active');
+                mobileMenuButton.innerHTML = `
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                `;
+            }
+        });
+    }
+});
+
+// Navigation script (fixed version)
+(function() {
     'use strict';
     
     // Configuration
@@ -528,7 +528,8 @@
             currentPath,
             currentFile,
             isMainPage,
-            hostname: window.location.hostname
+            hostname: window.location.hostname,
+            origin: window.location.origin
         });
         
         // Enhanced navigation configuration with multiple selectors
@@ -632,6 +633,62 @@
             }
         }
         
+        // FIXED: Enhanced main page URL determination
+        function determineMainPageUrl() {
+            const origin = window.location.origin;
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const port = window.location.port;
+            const pathname = window.location.pathname;
+            
+            console.log('URL Analysis:', {
+                origin,
+                protocol,
+                hostname,
+                port,
+                pathname
+            });
+            
+            // For custom domains (like chainshields.com)
+            if (!hostname.includes('github.io') && !hostname.includes('localhost') && !hostname.includes('127.0.0.1')) {
+                // Check if there's a main page file in the current directory
+                const pathParts = pathname.split('/').filter(part => part);
+                const currentDir = pathParts.slice(0, -1); // Remove current file
+                
+                if (currentDir.length > 0) {
+                    // We're in a subdirectory, go to the main directory
+                    return `${origin}/${currentDir.join('/')}/`;
+                } else {
+                    // We're already in the root or main directory
+                    return `${origin}/`;
+                }
+            }
+            
+            // For GitHub Pages: https://username.github.io/repo-name/
+            if (hostname.includes('github.io')) {
+                const pathParts = pathname.split('/').filter(part => part);
+                if (pathParts.length > 0) {
+                    // Include the repo name in the path
+                    return `${origin}/${pathParts[0]}/`;
+                }
+                return `${origin}/`;
+            }
+            
+            // For localhost development
+            if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+                const pathParts = pathname.split('/').filter(part => part);
+                if (pathParts.length > 0) {
+                    // Remove the current file but keep the directory structure
+                    const currentDir = pathParts.slice(0, -1);
+                    return `${origin}/${currentDir.join('/')}/`;
+                }
+                return `${origin}/`;
+            }
+            
+            // Default fallback
+            return origin + '/';
+        }
+        
         // Enhanced navigation click handler
         function handleNavClick(event, config, sectionName) {
             event.preventDefault();
@@ -658,24 +715,10 @@
                 // Navigate to main page with hash
                 const mainPageUrl = determineMainPageUrl();
                 const targetUrl = `${mainPageUrl}#${sectionName}`;
-                console.log('Navigating to:', targetUrl);
+                console.log('Main page URL determined:', mainPageUrl);
+                console.log('Final target URL:', targetUrl);
                 window.location.href = targetUrl;
             }
-        }
-        
-        // Determine correct main page URL for GitHub Pages
-        function determineMainPageUrl() {
-            const origin = window.location.origin;
-            const pathParts = window.location.pathname.split('/').filter(part => part);
-            
-            // For GitHub Pages: https://username.github.io/repo-name/
-            if (window.location.hostname.includes('github.io')) {
-                if (pathParts.length > 0) {
-                    return `${origin}/${pathParts[0]}/`;
-                }
-            }
-            
-            return origin + '/';
         }
         
         // Fallback text search for missing elements
@@ -720,7 +763,7 @@
             
             // Secondary: Setup text-based navigation with better matching
             const textMappings = {
-                'home': ['home'],
+                'home': ['why-chainshields'],
                 'why chainshields': ['why-chainshields'],
                 'chainshields': ['why-chainshields'],
                 'what we do': ['what-we-do'],
@@ -848,7 +891,6 @@
     };
     
 })();
-
     </script>
 </body>
 </html>
